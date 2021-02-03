@@ -49,6 +49,24 @@
               mkdir $out
               flake8 ${self}/wmo
             '';
+
+          yamllint = pkgs.runCommand "yamllint"
+            {
+              buildInputs = with pkgs; [ yamllint ];
+            }
+            ''
+              mkdir $out
+              yamllint --strict ${./.github/workflows}
+            '';
+
+          markdownlint = pkgs.runCommand "mdl"
+            {
+              buildInputs = [ pkgs.mdl ];
+            }
+            ''
+              mkdir $out
+              mdl ${./README.md}
+            '';
         };
       }
     );

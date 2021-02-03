@@ -1,6 +1,6 @@
-from unittest.mock import create_autospec
-from datetime import timedelta
 import unittest
+from datetime import timedelta
+from unittest.mock import create_autospec
 
 import requests
 

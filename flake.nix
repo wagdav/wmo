@@ -9,7 +9,7 @@
         pkgs = import nixpkgs { inherit system; };
 
         pythonEnv = (pkgs.poetry2nix.mkPoetryEnv {
-          projectDir = ./.;
+          projectDir = self;
         });
 
       in

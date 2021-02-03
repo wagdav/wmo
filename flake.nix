@@ -50,6 +50,15 @@
               flake8 --config ${self}/setup.cfg ${self}
             '';
 
+          isort = pkgs.runCommand "isort"
+            {
+              buildInputs = [ pkgs.python3Packages.isort ];
+            }
+            ''
+              mkdir $out
+              isort --check ${self}
+            '';
+
           yamllint = pkgs.runCommand "yamllint"
             {
               buildInputs = with pkgs; [ yamllint ];

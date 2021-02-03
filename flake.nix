@@ -47,7 +47,7 @@
             }
             ''
               mkdir $out
-              flake8 ${self}/wmo
+              flake8 --config ${self}/setup.cfg ${self}
             '';
 
           yamllint = pkgs.runCommand "yamllint"

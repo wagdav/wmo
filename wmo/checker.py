@@ -1,4 +1,5 @@
 import logging
+import time
 from dataclasses import dataclass
 from typing import List, Optional
 
@@ -43,3 +44,12 @@ class Checker:
 
     def check_sites(self, urls: List[str]) -> List[CheckResult]:
         return [self.check_site(url) for url in urls]
+
+
+def periodic(urls, interval: int):
+    checker = Checker(timeout=5)
+    while True:
+        logger.info("Checking %d sites", len(urls))
+        result = checker.check_sites(urls)
+        print(result)
+        time.sleep(interval)

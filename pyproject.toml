@@ -15,8 +15,8 @@ mypy = "^0.800"
 isort = "^5.7.0"
 
 [tool.poetry.scripts]
-check = 'wmo.__init__:check'
-write = 'wmo.__init__:write'
+check = 'wmo.cli:check'
+write = 'wmo.cli:write'
 
 [build-system]
 requires = ["poetry>=0.12"]

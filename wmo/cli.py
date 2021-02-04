@@ -15,6 +15,12 @@ def check():
         help="check interval in seconds",
     )
     parser.add_argument(
+        "--pattern",
+        type=str,
+        metavar="REGEXP",
+        help="Match the regular expression pattern in the response body",
+    )
+    parser.add_argument(
         "urls", nargs="+", type=str, metavar="URL", help="address of the website"
     )
 
@@ -23,7 +29,7 @@ def check():
     logging.basicConfig(level=logging.INFO)
 
     try:
-        wmo.checker.periodic(args.urls, args.interval)
+        wmo.checker.periodic(args.urls, args.interval, args.pattern)
     except KeyboardInterrupt:
         sys.exit(0)
 

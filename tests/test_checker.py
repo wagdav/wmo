@@ -24,6 +24,7 @@ class TestChecker(unittest.TestCase):
         self.session.get.assert_called_once_with(url, timeout=1)
         self.assertEqual(result.status_code, http_response.status_code)
         self.assertGreater(result.response_time, 0)
+        self.assertEqual(result.pattern, None)
 
     def test_returns_default_values_when_request_throws(self):
         url = "https://example.com"
@@ -34,3 +35,17 @@ class TestChecker(unittest.TestCase):
 
         self.assertEqual(result.status_code, 0)
         self.assertEqual(result.response_time, 0)
+
+    def test_matches_pattern(self):
+        http_response = requests.Response()
+        http_response._content = b"hello alice,hello bob"
+        self.session.get.return_value = http_response
+
+        somePattern = "hello ([^,]*)"
+
+        result = Checker(
+            timeout=1, pattern=somePattern, session=self.session
+        ).check_site("http://example.com")
+
+        self.assertEqual(result.pattern, somePattern)
+        self.assertEqual(result.matches, ["alice", "bob"])

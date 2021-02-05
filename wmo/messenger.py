@@ -1,8 +1,9 @@
 import dataclasses
 import json
 import logging
+from typing import Optional
 
-from kafka import KafkaProducer  # type: ignore
+from kafka import KafkaConsumer, KafkaProducer  # type: ignore
 
 from .checker import CheckResult
 
@@ -26,3 +27,19 @@ def on_send_success(_record_metadata):
 
 def on_send_error(excp):
     logger.error("Couldn't send the message", exc_info=excp)
+
+
+class Receiver:
+    def __init__(self, consumer: KafkaConsumer):
+        self._consumer = consumer
+
+    def __iter__(self):
+        return self
+
+    def __next__(self) -> Optional[CheckResult]:
+        while True:
+            message = next(self._consumer)
+            try:
+                return CheckResult(**json.loads(message))
+            except TypeError:
+                logger.warning("Ignoring the message %s", message)

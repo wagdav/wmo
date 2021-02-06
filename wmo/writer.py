@@ -1,9 +1,12 @@
 from typing import Any
 import json
+import logging
 
 import psycopg2  # type: ignore
 
 from .checker import CheckResult
+
+logger = logging.getLogger(__name__)
 
 
 class Writer:
@@ -15,11 +18,14 @@ class Writer:
         self._password = user
 
     def write(self, table: str, result: CheckResult) -> None:
-        with psycopg2.connect(
-            dbname=self._dbname, user=self._user, password=self._password
-        ) as connection:
-            with connection.cursor() as cursor:
-                self.write_cursor(cursor, table, result)
+        try:
+            with psycopg2.connect(
+                dbname=self._dbname, user=self._user, password=self._password
+            ) as connection:
+                with connection.cursor() as cursor:
+                    self.write_cursor(cursor, table, result)
+        except psycopg2.Error:
+            logger.exception("Couldn't write into the database")
 
     def write_cursor(self, cursor: Any, table: str, result: CheckResult) -> None:
         cursor.execute(

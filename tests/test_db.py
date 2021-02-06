@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import MagicMock
 
 from wmo.checker import CheckResult
-from wmo.writer import Writer
+from wmo.db import Writer
 
 
 class TestWriter(unittest.TestCase):

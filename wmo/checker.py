@@ -1,6 +1,5 @@
 import logging
 import re
-import time
 from dataclasses import dataclass
 from typing import List, Optional
 
@@ -52,6 +51,7 @@ class Checker:
             )
 
     def check_sites(self, urls: List[str]) -> List[CheckResult]:
+        logging.info("Checking %d sites", len(urls))
         return [self.check_site(url) for url in urls]
 
     def _compile_regexp(self) -> Optional[re.Pattern]:
@@ -64,12 +64,3 @@ class Checker:
             logger.warn("Invalid regular expression: %s", e)
 
         return None
-
-
-def periodic(urls: List[str], interval: int, pattern: str) -> None:
-    checker = Checker(timeout=5, pattern=pattern)
-    while True:
-        logger.info("Checking %d sites", len(urls))
-        result = checker.check_sites(urls)
-        print(result)
-        time.sleep(interval)

@@ -1,8 +1,9 @@
 import argparse
 import logging
 import sys
+import time
 
-import wmo.checker
+from wmo.checker import Checker
 
 
 def check():
@@ -29,7 +30,11 @@ def check():
     logging.basicConfig(level=logging.INFO)
 
     try:
-        wmo.checker.periodic(args.urls, args.interval, args.pattern)
+        checker = Checker(timeout=5, pattern=args.pattern)
+        while True:
+            result = checker.check_sites(args.urls)
+            print(result)
+            time.sleep(args.interval)
     except KeyboardInterrupt:
         sys.exit(0)
 

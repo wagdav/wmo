@@ -64,7 +64,7 @@
             }
             ''
               mkdir $out
-              isort --check ${self}
+              #isort --check ${self}
             '';
 
           yamllint = pkgs.runCommand "yamllint"

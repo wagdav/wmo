@@ -15,10 +15,18 @@
       in
       {
         devShell = pkgs.mkShell {
-          buildInputs = [ pkgs.poetry ];
+          buildInputs = [
+            pythonEnv
+            pkgs.poetry
+            pkgs.postgresql
+          ];
         };
 
-        defaultPackage = pythonEnv;
+        defaultPackage = (pkgs.poetry2nix.mkPoetryApplication {
+          projectDir = ./.;
+
+          propagatedBuildInputs = [ pkgs.postgresql ];
+        });
 
         checks = {
           build = self.defaultPackage."${system}";
@@ -34,7 +42,7 @@
 
           mypy = pkgs.runCommand "mypy"
             {
-              buildInputs = [ pkgs.mypy ];
+              buildInputs = [ pythonEnv ];
             }
             ''
               mkdir $out
@@ -43,7 +51,7 @@
 
           flake8 = pkgs.runCommand "flake8"
             {
-              buildInputs = [ pkgs.python3Packages.flake8 ];
+              buildInputs = [ pythonEnv ];
             }
             ''
               mkdir $out
@@ -52,7 +60,7 @@
 
           isort = pkgs.runCommand "isort"
             {
-              buildInputs = [ pkgs.python3Packages.isort ];
+              buildInputs = [ pythonEnv ];
             }
             ''
               mkdir $out

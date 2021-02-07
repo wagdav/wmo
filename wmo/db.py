@@ -1,9 +1,9 @@
-from typing import Any
 import json
 import logging
+from typing import Any
 
-from psycopg2.sql import SQL, Identifier  # type: ignore
 import psycopg2  # type: ignore
+from psycopg2.sql import SQL, Identifier  # type: ignore
 
 from .checker import CheckResult
 

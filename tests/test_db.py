@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import MagicMock, ANY
+from unittest.mock import ANY, MagicMock
 
 from wmo.checker import CheckResult
 from wmo.db import Writer

@@ -66,7 +66,7 @@
             }
             ''
               mkdir $out
-              isort --check ${self}
+              cd ${self} && isort --check wmo tests
             '';
 
           yamllint = pkgs.runCommand "yamllint"

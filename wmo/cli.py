@@ -1,14 +1,14 @@
-from pathlib import Path
 import argparse
 import logging
 import sys
 import time
+from pathlib import Path
 
 from kafka import KafkaConsumer, KafkaProducer  # type: ignore
 
 from wmo.checker import Checker
-from wmo.messenger import Receiver, Sender
 from wmo.db import Writer
+from wmo.messenger import Receiver, Sender
 
 
 def kafka_creds(creds_dir: Path):

@@ -3,13 +3,15 @@
 
   inputs.utils.url = "github:numtide/flake-utils";
 
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-20.09";
+
   outputs = { self, nixpkgs, utils }: utils.lib.eachDefaultSystem
     (system:
       let
         pkgs = import nixpkgs { inherit system; };
 
         pythonEnv = (pkgs.poetry2nix.mkPoetryEnv {
-          projectDir = self;
+          projectDir = ./.;
         });
 
       in
@@ -64,7 +66,7 @@
             }
             ''
               mkdir $out
-              #isort --check ${self}
+              isort --check ${self}
             '';
 
           yamllint = pkgs.runCommand "yamllint"

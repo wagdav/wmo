@@ -56,7 +56,7 @@ Create a new Kafka topic with the name `wmo`.
 
 ### Create a PostgreSQL service
 
-Use the [Aiven console](https://console.aiven.io) to create a Kafka service.
+Use the [Aiven console](https://console.aiven.io) to create a PostgreSQL service.
 
 Copy the generated PostgreSQL service URI and store it in an environment variable:
 

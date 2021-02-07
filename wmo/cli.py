@@ -4,15 +4,15 @@ import logging
 import sys
 import time
 
-from kafka import KafkaConsumer, KafkaProducer
+from kafka import KafkaConsumer, KafkaProducer  # type: ignore
 
 from wmo.checker import Checker
-from wmo.messenger import Sender
+from wmo.messenger import Receiver, Sender
 
 
 def kafka_creds(creds_dir: Path):
     """
-    Create Kafka connection parameters to read the necessary files from the
+    Create Kafka connection parameters by reading the necessary files from the
     following layout on the file system:
 
     └── kafka-389b7aa7-wagdav-b825.aivencloud.com:24387
@@ -81,9 +81,38 @@ def check():
     except KeyboardInterrupt:
         sys.exit(0)
     except Exception:
-        logger.exception("Unexpected error")
+        logging.exception("Unexpected error")
         sys.exit(1)
 
 
 def write():
-    print("Running write")
+    parser = argparse.ArgumentParser(
+        description="Write website availability results to a database"
+    )
+    parser.add_argument(
+        "--topic",
+        type=str,
+        default="wmo",
+        help="Subscribe to website check results on this topic",
+    )
+    parser.add_argument(
+        "--kafka",
+        type=str,
+        required=True,
+        metavar="PATH",
+        help="Read the service configuration from this path.",
+    )
+
+    args = parser.parse_args()
+
+    logging.basicConfig(level=logging.INFO)
+
+    try:
+        for result in Receiver(args.topic, KafkaConsumer(**kafka_creds(args.kafka))):
+            print(result)
+
+    except KeyboardInterrupt:
+        sys.exit(0)
+    except Exception:
+        logging.exception("Unexpected error")
+        sys.exit(1)

@@ -29,7 +29,7 @@ poetry run write --help
 If the installation of `psycopg2` library fails, use your operating system's
 package manager to install the PostgreSQL libraries.
 
-## Walkthrough using services hosted by aiven.io
+## Walk-through using services hosted by aiven.io
 
 ### Create a Kafka service
 
@@ -38,10 +38,12 @@ Use the [Aiven console](https://console.aiven.io) to create a Kafka service.
 Download the generated credentials and store them on the local disk in the
 following directory layout:
 
-    <KAFKA-SERVICE-NAME>.aivencloud.com:24387
-    ├── ca.pem
-    ├── service.cert
-    └── service.key
+```
+<KAFKA-SERVICE-NAME>.aivencloud.com:24387
+├── ca.pem
+├── service.cert
+└── service.key
+```
 
 The name of the directory corresponds to the generated URI of your Kafka
 service.  This directory contains the SSL keys required for the connection.
@@ -73,7 +75,8 @@ psql $POSTGRES_URI < scripts/create_db.sql
 To start the checker run:
 
 ```
-check --kafka ~/<KAFKA-SERVICE-NAME>.aivencloud.com:24387 https://httpbin.org https://google.com https://wikpedia.org
+check --kafka ~/<KAFKA-SERVICE-NAME>.aivencloud.com:24387 \
+    https://httpbin.org https://google.com https://wikpedia.org
 ```
 
 In a separate terminal window start the writer
@@ -82,7 +85,8 @@ In a separate terminal window start the writer
 write --kafka ~/<KAFKA-SERVICE-NAME>.aivencloud.com:24387 --db $POSTGRES_URI
 ```
 
-From the logs you should see that the two services communicate.  Monitor what is written in the database table:
+From the logs you should see that the two services communicate.  Monitor what
+is written in the database table:
 
 ```
 psql $POSTGRES_URI < scripts/list_results.sql

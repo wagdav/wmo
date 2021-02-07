@@ -6,9 +6,7 @@ from pathlib import Path
 
 from kafka import KafkaConsumer, KafkaProducer  # type: ignore
 
-from wmo.checker import Checker
-from wmo.db import Writer
-from wmo.messenger import Receiver, Sender
+import wmo
 
 
 def kafka_creds(creds_dir: Path):
@@ -71,8 +69,8 @@ def check():
     logging.basicConfig(level=logging.INFO)
 
     try:
-        checker = Checker(timeout=5, pattern=args.pattern)
-        sender = Sender(args.topic, KafkaProducer(**kafka_creds(args.kafka)))
+        checker = wmo.Checker(timeout=5, pattern=args.pattern)
+        sender = wmo.Sender(args.topic, KafkaProducer(**kafka_creds(args.kafka)))
 
         while True:
             results = checker.check_sites(args.urls)
@@ -121,9 +119,9 @@ def write():
     logging.basicConfig(level=logging.INFO)
 
     try:
-        for result in Receiver(args.topic, KafkaConsumer(**kafka_creds(args.kafka))):
+        for result in wmo.Receiver(args.topic, KafkaConsumer(**kafka_creds(args.kafka))):
             if args.db:
-                Writer(args.db).write(args.table, result)
+                wmo.Writer(args.db).write(args.table, result)
             else:
                 print(result)
 

@@ -40,6 +40,8 @@
           projectDir = ./.;
 
           propagatedBuildInputs = [ pkgs.postgresql ];
+
+          checkPhase = "python -m unittest discover";
         });
 
         checks = {

@@ -1,9 +1,36 @@
+from pathlib import Path
 import argparse
 import logging
 import sys
 import time
 
+from kafka import KafkaConsumer, KafkaProducer
+
 from wmo.checker import Checker
+from wmo.messenger import Sender
+
+
+def kafka_creds(creds_dir: Path):
+    """
+    Create Kafka connection parameters to read the necessary files from the
+    following layout on the file system:
+
+    └── kafka-389b7aa7-wagdav-b825.aivencloud.com:24387
+        ├── ca.pem
+        ├── service.cert
+        └── service.key
+
+    The return dictionary can be passed to the constructors of KafkaConsumer
+    and KafkaProducer.
+    """
+    creds_dir = Path(creds_dir)
+    return {
+        "bootstrap_servers": creds_dir.name,
+        "security_protocol": "SSL",
+        "ssl_cafile": str(creds_dir / "ca.pem"),
+        "ssl_certfile": str(creds_dir / "service.cert"),
+        "ssl_keyfile": str(creds_dir / "service.key"),
+    }
 
 
 def check():
@@ -22,6 +49,19 @@ def check():
         help="Match the regular expression pattern in the response body",
     )
     parser.add_argument(
+        "--topic",
+        type=str,
+        default="wmo",
+        help="Publish the website check results under this topic",
+    )
+    parser.add_argument(
+        "--kafka",
+        type=str,
+        required=True,
+        metavar="PATH",
+        help="Read the service configuration from this path.",
+    )
+    parser.add_argument(
         "urls", nargs="+", type=str, metavar="URL", help="address of the website"
     )
 
@@ -31,12 +71,18 @@ def check():
 
     try:
         checker = Checker(timeout=5, pattern=args.pattern)
+        sender = Sender(args.topic, KafkaProducer(**kafka_creds(args.kafka)))
+
         while True:
-            result = checker.check_sites(args.urls)
-            print(result)
+            results = checker.check_sites(args.urls)
+            for result in results:
+                sender.send(result)
             time.sleep(args.interval)
     except KeyboardInterrupt:
         sys.exit(0)
+    except Exception:
+        logger.exception("Unexpected error")
+        sys.exit(1)
 
 
 def write():

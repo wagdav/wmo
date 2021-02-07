@@ -94,13 +94,13 @@ psql $POSTGRES_URI < scripts/list_results.sql
 
 ## Continuous builds
 
-This project uses [GitHub Actions][./.github/workflows/test.yml] to validate
-the following aspects in each pach:
+This project uses [GitHub Actions](./.github/workflows/test.yml) to validate
+the following aspects in each patch:
 
-* consistent style in the code (black, isort)
-* conisstent style in other documents (yamllint, markdown)
-* static analysis (flake8)
-* unit tests pass
+* Consistent style in the code (black, isort)
+* Consistent style in other documents (yamllint, markdown)
+* Static analysis (flake8)
+* Unit tests pass
 
 You can also all these checks locally:
 
@@ -111,7 +111,7 @@ nix-build -A checks.x86_64-linux
 ## Acknowledgements
 
 I modeled the [flake.nix](./flake.nix) file after that of
-[nixops](https://github.com/NixOS/nixops)
+[nixops](https://github.com/NixOS/nixops).
 
 [nix]: https://nixos.org/guides/install-nix.html
 [poetry]: https://python-poetry.org/docs/#installation

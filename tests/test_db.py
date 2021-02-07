@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, ANY
 
 from wmo.checker import CheckResult
 from wmo.db import Writer
@@ -20,14 +20,12 @@ class TestWriter(unittest.TestCase):
         writer.write_cursor(cursor, "some_table", some_result)
 
         cursor.execute.assert_called_once_with(
+            ANY,  # placeholder for the query
             (
-                "INSERT INTO %s (url, status_code, response_time, pattern, matches) "
-                "VALUES (%s, %s, %s, %s, %s)"
+                "https://example.com",
+                200,
+                0.123,
+                None,
+                "[]",
             ),
-            "some_table",
-            "https://example.com",
-            200,
-            0.123,
-            None,
-            "[]",
         )

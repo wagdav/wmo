@@ -8,6 +8,7 @@ from kafka import KafkaConsumer, KafkaProducer  # type: ignore
 
 from wmo.checker import Checker
 from wmo.messenger import Receiver, Sender
+from wmo.db import Writer
 
 
 def kafka_creds(creds_dir: Path):
@@ -102,6 +103,18 @@ def write():
         metavar="PATH",
         help="Read the service configuration from this path.",
     )
+    parser.add_argument(
+        "--db",
+        type=str,
+        metavar="URI",
+        help="PostgreSQL database connection string.",
+    )
+    parser.add_argument(
+        "--table",
+        type=str,
+        default="wmo",
+        help="Write the results into this table",
+    )
 
     args = parser.parse_args()
 
@@ -109,7 +122,10 @@ def write():
 
     try:
         for result in Receiver(args.topic, KafkaConsumer(**kafka_creds(args.kafka))):
-            print(result)
+            if args.db:
+                Writer(args.db).write(args.table, result)
+            else:
+                print(result)
 
     except KeyboardInterrupt:
         sys.exit(0)

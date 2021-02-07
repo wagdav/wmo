@@ -2,6 +2,7 @@ from typing import Any
 import json
 import logging
 
+from psycopg2.sql import SQL, Identifier  # type: ignore
 import psycopg2  # type: ignore
 
 from .checker import CheckResult
@@ -24,15 +25,17 @@ class Writer:
             logger.exception("Couldn't write into the database")
 
     def write_cursor(self, cursor: Any, table: str, result: CheckResult) -> None:
+        logger.info("Writing %s to table %s", result, table)
         cursor.execute(
-            (
-                "INSERT INTO %s (url, status_code, response_time, pattern, matches) "
+            SQL(
+                "INSERT INTO {} (url, status_code, response_time, pattern, matches) "
                 "VALUES (%s, %s, %s, %s, %s)"
+            ).format(Identifier(table)),
+            (
+                result.url,
+                result.status_code,
+                result.response_time,
+                result.pattern,
+                json.dumps(result.matches),
             ),
-            table,
-            result.url,
-            result.status_code,
-            result.response_time,
-            result.pattern,
-            json.dumps(result.matches),
         )

@@ -119,7 +119,9 @@ def write():
     logging.basicConfig(level=logging.INFO)
 
     try:
-        for result in wmo.Receiver(args.topic, KafkaConsumer(**kafka_creds(args.kafka))):
+        for result in wmo.Receiver(
+            args.topic, KafkaConsumer(**kafka_creds(args.kafka))
+        ):
             if args.db:
                 wmo.Writer(args.db).write(args.table, result)
             else:

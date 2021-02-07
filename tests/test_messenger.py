@@ -1,4 +1,5 @@
 import unittest
+from dataclasses import dataclass
 from unittest.mock import create_autospec
 
 from kafka import KafkaConsumer, KafkaProducer
@@ -29,19 +30,25 @@ class TestMessenger(unittest.TestCase):
         )
 
     def test_calls_kafka_consumer(self):
+        @dataclass
+        class ConsumerRecord:
+            value: str
+
         consumer = create_autospec(KafkaConsumer, spec_set=True)
         consumer.__iter__.return_value = consumer
         consumer.__next__.side_effect = [
-            (
-                b'{"url": "https://example.com", "status_code": 200, '
-                b'"response_time": 0.123, "pattern": null, "matches": []}'
+            ConsumerRecord(
+                value=(
+                    b'{"url": "https://example.com", "status_code": 200, '
+                    b'"response_time": 0.123, "pattern": null, "matches": []}'
+                )
             ),
-            b"{}",  # will be ignored
+            ConsumerRecord(value=b"{}"),  # will be ignored
         ]
 
         with self.assertLogs() as cm:
             self.assertEqual(
-                [m for m in Receiver(consumer)],
+                [m for m in Receiver("someTopic", consumer)],
                 [
                     CheckResult(
                         url="https://example.com",
@@ -53,6 +60,7 @@ class TestMessenger(unittest.TestCase):
                 ],
             )
 
+        consumer.subscribe.assert_called_once_with("someTopic")
         self.assertEqual(
             cm.output, ["WARNING:wmo.messenger:Ignoring the message b'{}'"]
         )

@@ -31,15 +31,17 @@ def on_send_error(excp):
 
 
 class Receiver:
-    def __init__(self, consumer: KafkaConsumer):
+    def __init__(self, topic: str, consumer: KafkaConsumer):
+        self._topic = topic
         self._consumer = consumer
 
     def __iter__(self):
+        self._consumer.subscribe(self._topic)
         return self
 
     def __next__(self) -> Optional[CheckResult]:
         while True:
-            message = next(self._consumer)
+            message = next(self._consumer).value
             try:
                 return CheckResult(**json.loads(message))
             except TypeError:

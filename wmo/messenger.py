@@ -16,6 +16,7 @@ class Sender:
         self._producer = producer
 
     def send(self, result: CheckResult) -> None:
+        """ Publish the content of the check result on the provided topic """
         logger.info("Publishing message %s to topic %s", result, self._topic)
         self._producer.send(
             self._topic, json.dumps(dataclasses.asdict(result)).encode()

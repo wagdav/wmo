@@ -10,6 +10,8 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class CheckResult:
+    """ The result of a web site check """
+
     url: str
     status_code: int
     response_time: float
@@ -24,11 +26,26 @@ class Checker:
         pattern: Optional[str] = None,
         session: Optional[requests.Session] = None,
     ):
+        """
+        Create a context for checking websites.
+
+        The checker stops waiting for an HTTP response after `timeout` seconds.
+
+        If `pattern` is specified the HTTP response's body is matched against it.
+        The corresponding matches are stored in the return value.
+
+        Use the externally created `requests.Session` object for HTTP connections.
+        Useful for testing, or if you want to reuse an already existing session.
+        """
         self._session = session or requests.Session()
         self._timeout = timeout
         self._pattern = pattern
 
     def check_site(self, url) -> CheckResult:
+        """
+        Connect to the site at `url` using HTTP and collect availablilty
+        information.
+        """
         p = self._compile_regexp()
 
         try:
@@ -51,6 +68,9 @@ class Checker:
             )
 
     def check_sites(self, urls: List[str]) -> List[CheckResult]:
+        """
+        Same as `check_site` but operates on a list of URLs.
+        """
         logging.info("Checking %d sites", len(urls))
         return [self.check_site(url) for url in urls]
 

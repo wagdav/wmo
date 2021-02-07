@@ -12,16 +12,12 @@ logger = logging.getLogger(__name__)
 class Writer:
     """ Writes a `CheckResult` into a specified PostgreSQL table """
 
-    def __init__(self, dbname: str, user: str, password: str):
-        self._dbname = dbname
-        self._user = user
-        self._password = user
+    def __init__(self, uri: str):
+        self._uri = uri
 
     def write(self, table: str, result: CheckResult) -> None:
         try:
-            with psycopg2.connect(
-                dbname=self._dbname, user=self._user, password=self._password
-            ) as connection:
+            with psycopg2.connect(self._uri) as connection:
                 with connection.cursor() as cursor:
                     self.write_cursor(cursor, table, result)
         except psycopg2.Error:

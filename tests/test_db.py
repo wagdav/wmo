@@ -16,7 +16,7 @@ class TestWriter(unittest.TestCase):
             matches=[],
         )
 
-        writer = Writer("some_db", "some_username", "some_password")
+        writer = Writer("some_db_uri")
         writer.write_cursor(cursor, "some_table", some_result)
 
         cursor.execute.assert_called_once_with(

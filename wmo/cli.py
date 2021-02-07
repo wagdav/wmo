@@ -97,13 +97,6 @@ def write():
         help="Subscribe to website check results on this topic",
     )
     parser.add_argument(
-        "--kafka",
-        type=str,
-        required=True,
-        metavar="PATH",
-        help="Read the service configuration from this path.",
-    )
-    parser.add_argument(
         "--db",
         type=str,
         metavar="URI",
@@ -114,6 +107,13 @@ def write():
         type=str,
         default="wmo",
         help="Write the results into this table",
+    )
+    parser.add_argument(
+        "--kafka",
+        type=str,
+        required=True,
+        metavar="PATH",
+        help="Read the service configuration from this path.",
     )
 
     args = parser.parse_args()

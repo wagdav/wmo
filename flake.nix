@@ -24,6 +24,18 @@
           ];
         };
 
+        apps = {
+          check = {
+            type = "app";
+            program = "${self.defaultPackage."${system}"}/bin/check";
+          };
+
+          write = {
+            type = "app";
+            program = "${self.defaultPackage."${system}"}/bin/write";
+          };
+        };
+
         defaultPackage = (pkgs.poetry2nix.mkPoetryApplication {
           projectDir = ./.;
 
